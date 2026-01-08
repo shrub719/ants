@@ -486,4 +486,3 @@ class Pheromone(Entity):
 
 if __name__ == "__main__":
     Main()
-
