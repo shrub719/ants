@@ -7,10 +7,7 @@
 import random
 
 def Main():
-    """
-    Main
-    :return: None
-    """
+    """Top level function. Big mama."""
     SimulationParameters = []
     SimNo = input("Enter simulation number: ")
     if SimNo == "1":
@@ -51,6 +48,7 @@ def Main():
     input()
 
 def DisplayMenu():
+    """Print available menu options."""
     print()
     print("1. Display overall details")
     print("2. Display area details")
@@ -62,10 +60,18 @@ def DisplayMenu():
     print("> ", end='')
 
 def GetChoice():
+    """
+    Receive menu input from the user.
+    :return: user input as string
+    """
     Choice = input()
     return Choice
 
 def GetCellReference():
+    """
+    Allow the user to input a cell reference by row and column.
+    :return: row, column tuple
+    """
     print()
     Row = int(input("Enter row number: "))
     Column = int(input("Enter column number: "))
@@ -73,7 +79,12 @@ def GetCellReference():
     return Row, Column
 
 class Simulation():
+    """Simulation class that holds all global variables and class instances part of the simulation."""
     def __init__(self, SimulationParameters):
+        """
+        Create Simulation object.
+        :param SimulationParameters: list of configuration values: [0] StartingNumberOfNests, [1] NumberOfRows, [2] NumberOfColumns, [3] StartingFoodInNest, [4] StartingNumberOfFoodCells, [5] StartingAntsInNest, [6] NewPheromoneStrength, [7] PheromoneDecay 
+        """
         self._StartingNumberOfNests = SimulationParameters[0]
         self._NumberOfRows = SimulationParameters[1]
         self._NumberOfColumns = SimulationParameters[2]
@@ -114,18 +125,41 @@ class Simulation():
             self.AddFoodToCell(Row, Column,500)
 
     def SetUpANestAt(self, Row, Column):
+        """
+        Place a Nest with the starting amount of food.
+        :param Row: row of Nest
+        :param Column: column of Nest
+        """
         self._Nests.append(Nest(Row, Column, self._StartingFoodInNest))
         self._Ants.append(QueenAnt(Row, Column, Row, Column))
         for Worker in range(2, self._StartingAntsInNest + 1):
             self._Ants.append(WorkerAnt(Row, Column, Row, Column))
 
     def AddFoodToCell(self, Row, Column, Quantity):
+        """
+        Increase amount of food in a cell.
+        :param Row:
+        :param Column:
+        :param Quantity: quantity of food to add
+        """
         self._Grid[self.__GetIndex(Row, Column)].UpdateFoodInCell(Quantity)
 
     def __GetIndex(self, Row, Column):
+        """
+        Get 1D list index of a specific grid cell.
+        :param Row:
+        :param Column:
+        :return: index
+        """
         return (Row - 1) * self._NumberOfColumns + Column - 1
 
     def __GetIndicesOfNeighbours(self, Row, Column):
+        """
+        Get 1D list index of the neighbours of a specific grid cell.
+        :param Row:
+        :param Column:
+        :return: list of indices
+        """
         ListOfNeighbours = []
         for RowDirection in [-1, 0, 1]:
             for ColumnDirection in [-1, 0, 1]:
@@ -138,6 +172,12 @@ class Simulation():
         return ListOfNeighbours
 
     def __GetIndexOfNeighbourWithStrongestPheromone(self, Row, Column):
+        """
+        Get 1D list index of the neighbour of a specific grid cell which contains the strongest pheromone.
+        :param Row:
+        :param Column:
+        :return: 1 index
+        """
         StrongestPheromone = 0
         IndexOfStrongestPheromone = -1
         for Index in self.__GetIndicesOfNeighbours(Row, Column):
@@ -147,12 +187,21 @@ class Simulation():
         return IndexOfStrongestPheromone
 
     def GetNestInCell(self, C):
+        """
+        Get the Nest object in a specific Cell, or None if there is no cell.
+        :param C: Cell object
+        :return: Nest object, or None
+        """
         for N in self._Nests:
             if N.InSameLocation(C):
                 return N
         return None
 
     def UpdateAntsPheromoneInCell(self, A):
+        """
+        Make an Ant leave a new Pheromone on the Cell it's currently in.
+        :param A: Ant
+        """
         for P in self._Pheromones:
             if P.InSameLocation(A) and P.GetBelongsTo() == A.GetID():
                 P.UpdateStrength(self._NewPheromoneStrength)
@@ -160,6 +209,11 @@ class Simulation():
         self._Pheromones.append(Pheromone(A.GetRow(), A.GetColumn(), A.GetID(), self._NewPheromoneStrength, self._PheromoneDecay))
 
     def GetNumberOfAntsInCell(self, C):
+        """
+        Get number of Ants in a Cell. (gasp!)
+        :param C: cell
+        :return: number of Ants
+        """
         Count = 0
         for A in self._Ants:
             if A.InSameLocation(C):
@@ -167,6 +221,11 @@ class Simulation():
         return Count
 
     def GetNumberOfPheromonesInCell(self, C):
+        """
+        Get number of Pheromones in a Cell. (gasp!!)
+        :param C: cell
+        :return: number of Pheromones
+        """
         Count = 0
         for P in self._Pheromones:
             if P.InSameLocation(C):
@@ -174,6 +233,11 @@ class Simulation():
         return Count
 
     def GetStrongestPheromoneInCell(self, C):
+        """
+        Get strength of the strongest Pheromone in a Cell.
+        :param C: cell
+        :return: strength of Pheromone
+        """
         Strongest = 0
         for P in self._Pheromones:
             if P.InSameLocation(C):
@@ -182,6 +246,10 @@ class Simulation():
         return Strongest
 
     def GetDetails(self):
+        """
+        Get a string representation of the contents of every Cell in the grid.
+        :return: multiline string
+        """
         Details = ""
         for Row in range(1, self._NumberOfRows + 1):
             for Column in range(1, self._NumberOfColumns + 1):
@@ -202,6 +270,10 @@ class Simulation():
         return Details
 
     def GetAreaDetails(self, StartRow, StartColumn, EndRow, EndColumn):
+        """
+        Get a string representation of the contents of every Cell in a square from (StartRow, StartColumn) to (EndRow, EndColumn).
+        :return: multiline string
+        """
         Details = ""
         for Row in range(StartRow, EndRow + 1):
             for Column in range(StartColumn, EndColumn + 1):
@@ -222,12 +294,23 @@ class Simulation():
         return Details
 
     def AddFoodToNest(self, Food, Row, Column):
+        """
+        Increase the amount of food in any Nests at (Row, Column).
+        :param Food: amount of food to add
+        :param Row:
+        :param Column:
+        """
         for N in self._Nests:
             if N.GetRow() == Row and N.GetColumn() == Column:
                 N.ChangeFood(Food)
                 return
 
     def GetCellDetails(self, Row, Column):
+        """
+        Get a string representation of the contents of the Cell at (Row, Column), with more detail.
+        :param Row:
+        :param Column:
+        """
         CurrentCell = self._Grid[self.__GetIndex(Row, Column)]
         Details = CurrentCell.GetDetails()
         N = self.GetNestInCell(CurrentCell)
@@ -248,6 +331,10 @@ class Simulation():
         return Details
 
     def AdvanceStage(self, NumberOfStages):
+        """
+        Advance the simulation by one "stage", ticking Pheromonones, food, and Ant positions.
+        :param NumberOfStages: the number of stages to advance in one go
+        """
         for Count in range(1, NumberOfStages + 1):
             PheromonesToDelete = []
             for P in self._Pheromones:
@@ -276,48 +363,96 @@ class Simulation():
                 self._Nests, self._Ants, self._Pheromones = N.AdvanceStage(self._Nests, self._Ants, self._Pheromones)
 
 class Entity():
+    """Abstract class for all things that can occupy a space on the grid."""
     def __init__(self, StartRow, StartColumn):
+        """Create an Entity. Never directly called, instead intended as a base for child classes."""
         self._Row = StartRow
         self._Column = StartColumn
         self._ID = None
 
     def InSameLocation(self, E):
+        """
+        Check if this Entity is in the same location as another.
+        :param E: the other Entity
+        :return: boolean
+        """
         return E.GetRow() == self._Row and E.GetColumn() == self._Column
 
     def GetRow(self):
+        """
+        Get the row of the Entity.
+        :return: row number
+        """
         return self._Row
 
     def GetColumn(self):
+        """
+        Get the column of the Entity.
+        :return: column number
+        """
+
         return self._Column
 
     def GetID(self):
+        """
+        Get the ID of the Entity.
+        :return: ID
+        """
         return self._ID
 
     def AdvanceStage(self, Nests, Ants, Pheromones):
+        """Base method for what happens to an Entity every tick. Never directly called, instead intended as a base for child classes."""
         pass
 
     def GetDetails(self):
+        """Base detail printing method. Never directly called, instead intended as a base for child classes."""
         return ""
 
 class Cell(Entity):
+    """Cell class that 'holds' all things at a certain grid position."""
     def __init__(self, StartRow, StartColumn):
+        """
+        Create a Cell with 0 food.
+        :param StartRow:
+        :param StartColumn:
+        """
         super().__init__(StartRow, StartColumn)
         self._AmountOfFood = 0
 
     def GetAmountOfFood(self):
+        """
+        Get amount of food.
+        :return: amount of food
+        """
         return self._AmountOfFood
 
     def GetDetails(self):
+        """
+        Print details: food in the Cell.
+        :return: multiline string
+        """
         Details = f"{super().GetDetails()}{self._AmountOfFood} food present" + "\n\n"
         return Details
 
     def UpdateFoodInCell(self, Change):
+        """
+        Increase the amount of food in the Cell.
+        :param Change: amount to change by. Negative change results in a decrease in food amount
+        """
         self._AmountOfFood += Change
 
 class Ant(Entity):
+    """Ant class that represents a single wandering Ant that follows Phermonone trails and carries food."""
     _NextAntID = 1
 
     def __init__(self, StartRow, StartColumn, NestInRow, NestInColumn):
+        """
+        Create an Ant.
+        :param StartRow:
+        :param StartColumn:
+        :param NestInRow: row of the Ant's home Nest
+        :param NestInColumn: column of the Ant's home Nest
+        """
         super().__init__(StartRow, StartColumn)
         self._NestRow = NestInRow
         self._NestColumn = NestInColumn
@@ -329,21 +464,47 @@ class Ant(Entity):
         self._TypeOfAnt = ""
 
     def GetFoodCapacity(self):
+        """
+        Get maximum capacity of stored food.
+        :return: amount of food
+        """
         return self._FoodCapacity
 
     def IsAtOwnNest(self):
+        """
+        Check if the Ant is home.
+        :return: boolean
+        """
         return self._Row == self._NestRow and self._Column == self._NestColumn
 
     def AdvanceStage(self, Nests, Ants, Pheromones):
+        """
+        Advance stage: increase number of stages alive.
+        """
         self._Stages += 1
 
     def GetDetails(self):
+        """
+        Print details: ID, Ant type, stages alive
+        :return: multiline string
+        """
         return f"{super().GetDetails()}  Ant {self._ID}, {self._TypeOfAnt}, stages alive: {self._Stages}"
 
     def UpdateFoodCarried(self, Change):
+        """
+        Increase the amount of food carried by the Ant.
+        :param Change: amount to change by. Negative Change results in a decrease in carried food.
+        """
         self._AmountOfFoodCarried += Change
 
     def _ChangeCell(self, NewCellIndicator, RowToChange, ColumnToChange):
+        """
+        Move the Ant in a specific direction.
+        :param NewCellIndicator: indicates direction in which to move, starting from 0 down-left and going clockwise
+        :param RowToChange: current row
+        :param ColumnToChange: current column
+        :return: tuple of new row and new column
+        """
         if NewCellIndicator > 5:
             RowToChange += 1
         elif NewCellIndicator < 3:
@@ -355,6 +516,11 @@ class Ant(Entity):
         return RowToChange, ColumnToChange
 
     def _ChooseRandomNeighbour(self, ListOfNeighbours):
+        """
+        Pick a random inhabited grid position from a list of neighbours.
+        :param ListOfNeighbours:
+        :return: random index of inhabited cell in the list
+        """
         Chosen = False
         while Chosen == False:
             RNo = random.randint(0, len(ListOfNeighbours) - 1)
@@ -378,11 +544,13 @@ class Ant(Entity):
         return self._TypeOfAnt
 
 class QueenAnt(Ant):
+    """Queen Ant. Surprisingly nothing functionally special, but is the last to be culled."""
     def __init__(self, StartRow, StartColumn, NestInRow, NestInColumn):
         super().__init__(StartRow, StartColumn, NestInRow, NestInColumn)
         self._TypeOfAnt = "queen"
 
 class WorkerAnt(Ant):
+    """Worker Ant class with a maximum food capacity of 30."""
     def __init__(self, StartRow, StartColumn, NestInRow, NestInColumn):
         super().__init__(StartRow, StartColumn, NestInRow, NestInColumn)
         self._TypeOfAnt = "worker"
