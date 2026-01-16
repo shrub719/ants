@@ -1,5 +1,5 @@
 # 🐜
-Resources for the 2026 AQA A level CS skeleton program
+Resources for the 2026 AQA A level CS skeleton program.
 
 ## How to use
 
