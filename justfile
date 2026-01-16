@@ -18,7 +18,7 @@
     $HOME/bin/nvim-macos-x86_64/bin/nvim src/tasks/{{name}}/main.py
 
 @open-task-doc name:
-    $HOME/bin/nvim-macos-x86_64/bin/nvim src/tasks/{{name}}/doc.md
+    $HOME/bin/nvim-macos-x86_64/bin/nvim src/tasks/{{name}}/README.md
 
 alias t := run-task
 alias r := run-task
