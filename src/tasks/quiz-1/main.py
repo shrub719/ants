@@ -19,7 +19,8 @@ def Main():
         SimulationParameters = [2, 10, 10, 500, 3, 6, 1000, 25]
     ThisSimulation = Simulation(SimulationParameters)
     Choice = ""
-    while Choice != "9":
+    Exit = False
+    while not Exit:
         DisplayMenu()
         Choice = GetChoice()
         if Choice == "1":
@@ -44,9 +45,12 @@ def Main():
             NumberOfStages = int(input("Enter number of stages to advance by: "))
             ThisSimulation.AdvanceStage(NumberOfStages)
             print(f"Simulation moved on {NumberOfStages} stages" + "\n")
-        elif Choice == "7":
-            ThisSimulation.DisplayGrid()
+        elif Choice == "9":
+            Confirm = input("Are you sure? (y/n): ")
+            if Confirm == "y":
+                Exit = True
 
+    print("The simulation has ended")
     input()
 
 def DisplayMenu():
@@ -56,7 +60,6 @@ def DisplayMenu():
     print("3. Inspect cell")
     print("4. Advance one stage")
     print("5. Advance X stages")
-    print("7. World view")
     print("9. Quit")
     print()
     print("> ", end='')
@@ -112,21 +115,6 @@ class Simulation():
                     if N.GetRow() == Row and N.GetColumn() == Column:
                         Allowed = False
             self.AddFoodToCell(Row, Column,500)
-
-    def DisplayGrid(self):
-        # 2D ASCII grid where a Nest is represented by 'N', an Ant by 'A', Food by 'F' and an empty space with '.'.
-        for row in range(1, self._NumberOfRows+1):
-            for column in range(1, self._NumberOfColumns+1):
-                cell = self._Grid[self.__GetIndex(row, column)]
-                if self.GetNestInCell(cell) is not None:
-                    print("N", end=" ")
-                elif self.GetNumberOfAntsInCell(cell) > 0:
-                    print("A", end=" ")
-                elif cell.GetAmountOfFood() > 0:
-                    print("F", end=" ")
-                else:
-                    print(".", end=" ")
-            print()
 
     def SetUpANestAt(self, Row, Column):
         self._Nests.append(Nest(Row, Column, self._StartingFoodInNest))

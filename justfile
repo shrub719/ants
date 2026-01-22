@@ -20,9 +20,14 @@
 @open-task-doc name:
     $HOME/bin/nvim-macos-x86_64/bin/nvim src/tasks/{{name}}/README.md
 
+@list-tasks:
+    ls src/tasks
+
 alias t := run-task
 alias r := run-task
 alias c := create-task
 alias o := open-task
 alias d := open-task-doc
+alias l := list-tasks
+alias list := list-tasks
 
