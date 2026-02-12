@@ -14,11 +14,12 @@
     cp src/master/main.py src/tasks/{{name}}/main.py
     echo "created task {{name}}"
 
+
 @open-task name:
-    $HOME/bin/nvim-macos-x86_64/bin/nvim src/tasks/{{name}}/main.py
+    nvim src/tasks/{{name}}/main.py
 
 @open-task-doc name:
-    $HOME/bin/nvim-macos-x86_64/bin/nvim src/tasks/{{name}}/README.md
+    nvim src/tasks/{{name}}/README.md
 
 @list-tasks:
     ls src/tasks
