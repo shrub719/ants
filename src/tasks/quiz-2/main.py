@@ -401,8 +401,6 @@ class WorkerAnt(Ant):
         return f"{super().GetDetails()}, carrying {self._AmountOfFoodCarried} food, home nest is at {self._NestRow} {self._NestColumn}"
 
     def ChooseCellToMoveTo(self, ListOfNeighbours, IndexOfNeighbourWithStrongestPheromone, IndexOfNeighbourWithStrongestSmell):
-
-
         if self._AmountOfFoodCarried > 0:
             if self._Row > self._NestRow:
                 self._Row -= 1
@@ -426,7 +424,6 @@ class ForagerAnt(WorkerAnt):
         self._FoodCapacity = 30
 
     def ChooseCellToMoveTo(self, ListOfNeighbours, IndexOfNeighbourWithStrongestPheromone, IndexOfNeighbourWithStrongestSmell):
-        # giving the Index...Smell parameter a default value of -1 means you don't have to modify other classes
         if self._AmountOfFoodCarried > 0:
             print("Forager ant moving back to Nest")
             if self._Row > self._NestRow:

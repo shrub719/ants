@@ -1,11 +1,9 @@
 [default]
 @run file="master/main":
-    source .venv/bin/activate
     echo "======== MASTER ========"
     python3 src/{{file}}.py
 
 @run-task name:
-    source .venv/bin/activate
     echo "======== TASK: {{name}} ========"
     python3 src/tasks/{{name}}/main.py
 
@@ -13,7 +11,6 @@
     mkdir src/tasks/{{name}}
     cp src/master/main.py src/tasks/{{name}}/main.py
     echo "created task {{name}}"
-
 
 @open-task name:
     nvim src/tasks/{{name}}/main.py
